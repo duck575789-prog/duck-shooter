@@ -10,35 +10,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
+    - name: Checkout Source Code
       uses: actions/checkout@v4
 
-    - name: Setup Java JDK 17
+    - name: Setup Java 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Setup Node.js
+    - name: Setup Node.js 20
       uses: actions/setup-node@v4
       with:
         node-version: 20
 
-    - name: Initialize App & Build Native Android
+    - name: Setup & Build Android APK
       run: |
+        # 1. Project folder initialize karein
         npm init -y
-        npm install @capacitor/core @capacitor/cli @capacitor/android
+        npm install @capacitor/core@latest @capacitor/cli@latest @capacitor/android@latest
+
+        # 2. Web folder verify karein
+        mkdir -p www
+        if [ -f "index.html" ]; then cp index.html www/; fi
+        if [ -d "www" ] && [ -f "www/index.html" ]; then echo "index.html found"; fi
+
+        # 3. Capacitor project create karein
         npx cap init "Duck Shooter 3D" "com.rahulgupta.duckshooter2" --web-dir www
         npx cap add android
         npx cap copy android
 
-    - name: Build APK with Gradle
-      run: |
+        # 4. Gradle se APK build karein
         cd android
         chmod +x gradlew
-        ./gradlew assembleDebug
+        ./gradlew assembleDebug --stacktrace
 
-    - name: Upload APK
+    - name: Upload Final APK
       uses: actions/upload-artifact@v4
       with:
         name: DuckShooter-APK
