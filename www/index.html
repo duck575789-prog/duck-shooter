@@ -43,7 +43,6 @@
       cursor: crosshair;
     }
 
-    /* Screen Overlays */
     .screen {
       position: absolute;
       inset: 0;
@@ -59,7 +58,6 @@
     }
     .screen.hidden { display: none !important; }
 
-    /* Animated Dynamic Particles for Home Screen */
     .home-bg-animation {
       position: absolute;
       inset: 0;
@@ -85,7 +83,6 @@
       100% { transform: translateX(-120px) scaleX(1); }
     }
 
-    /* Realistic 3D Round Golden Coin Element */
     .coin-round-3d {
       width: 32px;
       height: 32px;
@@ -127,7 +124,6 @@
       font-size: 14px;
     }
 
-    /* Cookie Board Window */
     .cookie-board-window {
       background: #c68642;
       background-image: 
@@ -143,10 +139,8 @@
       position: relative;
       max-width: 90%;
       box-sizing: border-box;
-      transition: transform 0.2s ease;
     }
 
-    /* Cookie UI Buttons */
     .cookie-btn {
       position: relative;
       background: linear-gradient(180deg, #ffc857 0%, #ff9800 45%, #d86900 100%);
@@ -206,7 +200,6 @@
       box-shadow: 0 2px 0 #003657, 0 4px 10px rgba(0,0,0,0.6);
     }
 
-    /* Golden Ribbon Banner */
     .ribbon-banner {
       position: relative;
       background: linear-gradient(180deg, #ffdc33 0%, #f39c12 50%, #d35400 100%);
@@ -229,7 +222,6 @@
       border-color: #ffcccc;
     }
 
-    /* Triple 3D Stars Animation */
     .stars-cluster {
       display: flex;
       justify-content: center;
@@ -254,7 +246,6 @@
       margin-top: -14px;
     }
 
-    /* Gameplay Top HUD */
     .gameplay-hud {
       position: absolute;
       top: max(12px, env(safe-area-inset-top, 12px));
@@ -290,7 +281,6 @@
       pointer-events: none;
     }
 
-    /* YouTube Promo Card */
     .yt-promo-banner {
       width: 100%;
       background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
@@ -308,7 +298,6 @@
       box-shadow: 0 4px 12px rgba(185, 28, 28, 0.45);
     }
 
-    /* Hub Tabs */
     .hub-tabs {
       display: flex;
       width: 100%;
@@ -332,7 +321,6 @@
       box-shadow: 0 4px 12px rgba(216, 105, 0, 0.6);
     }
 
-    /* Winding Flow-Map Road Layout */
     .flow-map-container {
       flex: 1;
       width: 100%;
@@ -423,7 +411,7 @@
 <body>
   <div id="phoneContainer">
 
-    <!-- 1. HOME SCREEN (LIVELY 3D & FLOATING ANIMATIONS) -->
+    <!-- 1. HOME SCREEN -->
     <div id="homeScreen" class="screen">
       <div class="home-bg-animation">
         <div class="floating-duck-deco">🦆</div>
@@ -437,7 +425,7 @@
       </h1>
 
       <div class="cookie-board-window" style="width:235px; margin-bottom:24px; z-index:2;">
-        <div style="font-size:80px; filter: drop-shadow(0 12px 14px rgba(0,0,0,0.65)); animation: duckFloat 2.6s ease-in-out infinite alternate;">🦆</div>
+        <div style="font-size:80px; filter: drop-shadow(0 12px 14px rgba(0,0,0,0.65));">🦆</div>
         <div style="color:#fff3cc; font-size:14px; font-weight:900; margin-top:4px; text-shadow: 0 2px 4px #000;">COOKIE ISLANDS</div>
       </div>
 
@@ -455,14 +443,12 @@
       <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
         <h2 style="color:#ffdf79; font-size:17px; font-weight:900; text-shadow:0 2px 4px #000;">ISLAND EXPEDITION</h2>
         
-        <!-- ROUND 3D COIN BADGE -->
         <div class="coin-badge-container">
           <div class="coin-round-3d">$</div>
           <span id="hubCoins">0</span>
         </div>
       </div>
 
-      <!-- YouTube Channel Promo Card -->
       <a href="https://youtube.com/@thegovindgupta?si=gXoJJdVou07U7r1m" target="_blank" class="yt-promo-banner">
         <span>🔴 SUBSCRIBE CREATOR</span>
         <span style="color:#fef08a;">@thegovindgupta ▶</span>
@@ -557,6 +543,52 @@
     let bgmStep = 0;
     let bgmTimer = null;
 
+    // ================= REAL ADMOB INTEGRATION =================
+    // Aapki real App ID: ca-app-pub-1590363558146928~5915974911
+    // Testing ke liye safe Ad Units:
+    const ADMOB_BANNER_ID = 'ca-app-pub-3940256099942544/6300978111';
+    const ADMOB_INTERSTITIAL_ID = 'ca-app-pub-3940256099942544/1033173712';
+    let interstitialAd = null;
+
+    document.addEventListener('deviceready', async () => {
+      if (window.admob) {
+        try {
+          await admob.start();
+          const banner = new admob.BannerAd({
+            adUnitId: ADMOB_BANNER_ID,
+            position: 'bottom'
+          });
+          await banner.show();
+          loadInterstitial();
+        } catch (e) {
+          console.log("AdMob Error:", e);
+        }
+      }
+    }, false);
+
+    async function loadInterstitial() {
+      if (window.admob) {
+        try {
+          interstitialAd = new admob.InterstitialAd({
+            adUnitId: ADMOB_INTERSTITIAL_ID
+          });
+          await interstitialAd.load();
+        } catch (e) {}
+      }
+    }
+
+    async function triggerAdMobInterstitial() {
+      if (interstitialAd) {
+        try {
+          await interstitialAd.show();
+          loadInterstitial();
+        } catch (e) {
+          loadInterstitial();
+        }
+      }
+    }
+
+    // ================= AUDIO ENGINE =================
     const bgmNotes = [
       261.63, 293.66, 329.63, 392.00, 329.63, 293.66, 261.63, 196.00,
       220.00, 261.63, 293.66, 349.23, 329.63, 293.66, 246.94, 196.00
@@ -612,13 +644,11 @@
       }, 210);
     }
 
-    // AUTHENTIC HUNTING RIFLE ECHOING SOUND GENERATOR
     function playGunShotAudio(gunType) {
       if (!audioCtx) return;
       try {
         const now = audioCtx.currentTime;
 
-        // 1. Sharp Gunpowder Blast Noise Wave
         const bufferSize = Math.floor(audioCtx.sampleRate * 0.14);
         const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = noiseBuffer.getChannelData(0);
@@ -643,7 +673,6 @@
         noiseGain.connect(audioCtx.destination);
         noiseNode.start(now);
 
-        // 2. Heavy Gun Body Punch Thump
         const punchOsc = audioCtx.createOscillator();
         const punchGain = audioCtx.createGain();
         punchOsc.type = 'sine';
@@ -658,7 +687,6 @@
         punchOsc.start(now);
         punchOsc.stop(now + 0.28);
 
-        // 3. Multi-Tap Long Woodsy Echo Tails
         const echoDelays = [0.08, 0.18, 0.32, 0.48];
         echoDelays.forEach((delay, idx) => {
           const echoOsc = audioCtx.createOscillator();
@@ -1031,6 +1059,8 @@
     function showWinScreen() {
       isRunning = false;
       playSfx('win');
+      triggerAdMobInterstitial(); // AdMob Trigger on Win
+
       if (currentLvl + 1 > maxUnlockedLvl) {
         maxUnlockedLvl = Math.min(99, currentLvl + 1);
         saveState();
@@ -1058,6 +1088,8 @@
     function endGame() {
       isRunning = false;
       playSfx('lose');
+      triggerAdMobInterstitial(); // AdMob Trigger on Lose
+
       document.getElementById('gameOverScreen').classList.remove('hidden');
     }
 
@@ -1226,7 +1258,6 @@
       requestAnimationFrame(loop);
     }
 
-    // Direct Canvas Pointer Input
     canvas.addEventListener('pointerdown', (e) => {
       initAudio();
       if (!isRunning) return;
@@ -1244,7 +1275,6 @@
       openHubScreen();
     });
 
-    // FLOW ROAD LAYOUT FOR 100 LEVELS
     window.switchHub = function(tab) {
       playClickSound();
       document.getElementById('tabLevels').classList.remove('active');
