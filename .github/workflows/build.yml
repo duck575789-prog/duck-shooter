@@ -25,21 +25,33 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 18
+        node-version: 20
 
-    - name: Install Cordova
+    - name: Install Cordova CLI
       run: npm install -g cordova
 
-    - name: Add Android Platform & Plugins
+    - name: Create Clean Cordova Project & Build
       run: |
+        # 1. Fresh Cordova app create karein
+        cordova create myapp com.rahulgupta.duckshooter2 "Duck Shooter 3D"
+        cd myapp
+
+        # 2. Hamari files copy karein
+        rm -rf www/*
+        cp -r ../www/* www/
+        cp ../config.xml .
+
+        # 3. Android platform add karein
         cordova platform add android@12.0.1
+
+        # 4. AdMob plugin add karein (aapki App ID ke saath)
         cordova plugin add cordova-plugin-admob-plus --variable APP_ID_ANDROID="ca-app-pub-1590363558146928~5915974911"
 
-    - name: Build Debug APK
-      run: cordova build android --debug
+        # 5. Build Android APK
+        cordova build android --debug
 
     - name: Upload APK Artifact
       uses: actions/upload-artifact@v4
       with:
         name: DuckShooter-APK
-        path: platforms/android/app/build/outputs/apk/debug/*.apk
+        path: myapp/platforms/android/app/build/outputs/apk/debug/*.apk
