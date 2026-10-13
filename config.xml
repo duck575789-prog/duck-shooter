@@ -9,8 +9,13 @@
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
 
-    <!-- Target SDK 34 taaki Indus Appstore par warning na aaye -->
+    <!-- Android Target SDK 34 (Indus Appstore / Play Store compliant) -->
     <preference name="android-minSdkVersion" value="22" />
     <preference name="android-targetSdkVersion" value="34" />
     <preference name="android-compileSdkVersion" value="34" />
+
+    <!-- Official Free AdMob Plugin with Your App ID -->
+    <plugin name="cordova-plugin-admob-plus" spec="^1.28.0">
+        <variable name="APP_ID_ANDROID" value="ca-app-pub-1590363558146928~5915974911" />
+    </plugin>
 </widget>
